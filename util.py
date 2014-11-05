@@ -4,13 +4,19 @@ import binascii
 import string
 import bitstring
 
-def tobits(s):
+def asciiTobits(s):
 	return bitstring.Bits(bytes=s)
 
-def frombits(b):
+def bitsToAscii(b):
 	return b.tobytes()
 
-def hexToAsciu(h):
+def hexTobits(h):
+	return asciiTobits(hexToAscii(h))
+
+def bitsTohex(h):
+	return b.hex
+
+def hexToAscii(h):
 	return binascii.unhexlify(h)
 
 def asciiToHex(s):
@@ -67,7 +73,8 @@ def testSingleXor(searchStr):
 		for c in searchStr:
 			if c in char:
 				score += 1
-		return float("{0:.3f}".format(float(score)/len(searchStr)))
+		return float(score)/len(searchStr)
+		#return float("{0:.3f}".format(float(score)/len(searchStr)))
 
 	# main
 	return findXor(searchStr)

@@ -14,7 +14,7 @@ for cipher in cipherList:
 		maxScore = score
 		maxSet = cipher, score, key, plaintext
 
-print maxSet[0]
-print maxSet[1:]
+print (maxSet[0])
+print (maxSet[1:])
 
 

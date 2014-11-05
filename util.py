@@ -11,7 +11,7 @@ def testSingleXor(searchStr):
 		    	'p':1.9, 'q':0.1, 'r':6.0, 's':6.3, 't':9.1,
 				'u':2.8, 'v':1.0, 'w':2.4, 'x':0.2, 'y':2.0, 'z':0.1}
 	freqSeq = "etaoinsrhdlucmfywgpbvkxqjz"
-	char = string.ascii_letters + string.digits
+	char = string.ascii_letters + string.digits + ' '
 
 	# local dictionary file
 	filename = "/usr/share/dict/words"
@@ -23,11 +23,11 @@ def testSingleXor(searchStr):
 
 		for key in char:
 			decipher = xorStrings(cipher, key*length)
-			score = wordProfiler(decipher)
+			score = charProfiler(decipher)
 			if maxSet[0] < score:
 				maxSet = score, key, decipher
 			# print maxSet
-		return maxSet[1], maxSet[2]
+		return maxSet
 
 	def wordProfiler(searchStr):
 		dictionary = open(filename).read()
@@ -40,6 +40,13 @@ def testSingleXor(searchStr):
 				if word == dictWord:
 					score += 1
 		return score
+
+	def charProfiler(searchStr):
+		score = 0
+		for c in searchStr:
+			if c in char:
+				score += 1
+		return float("{0:.3f}".format(float(score)/len(searchStr)))
 
 	# main
 	return findXor(searchStr)

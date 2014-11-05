@@ -2,9 +2,16 @@
 import base64
 import binascii
 import string
+import bitstring
 
-def hexToAscii(s):
-	return binascii.unhexlify(s)
+def tobits(s):
+	return bitstring.Bits(bytes=s)
+
+def frombits(b):
+	return b.tobytes()
+
+def hexToAsciu(h):
+	return binascii.unhexlify(h)
 
 def asciiToHex(s):
 	return binascii.hexlify(s)
@@ -15,8 +22,8 @@ def asciiToBase64(s):
 def base64ToAscii(s):
 	return binascii.a2b_base64(s)
 
-def xorHexStrings(s1, s2):
-	return asciiToHex(xorStrings(hexToAscii(s1), hexToAscii(s2)))
+def xorHexStrings(h1, h2):
+	return asciiToHex(xorStrings(hexToAscii(h1), hexToAscii(h2)))
 
 def xorStrings(s1,s2):
 	result = ''
@@ -72,7 +79,8 @@ def repeatKeyXor(key, plaintext):
 	
 	return xorStrings(plaintext, xorKey)
 
-
+def hamming(b1, b2):
+	return (b1 ^ b2).count(1)
 
 
 '''

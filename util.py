@@ -64,7 +64,7 @@ def xor_byte(plainbyte, keybyte):
 	#return ''.join(chr(ord(c1) ^ ord(c2)) for c1, c2 in zip(plainbyte, itertools.cycle(chr(keybyte))))
 
 def xor_str(plaintext, key):
-	return ''.join(chr(c ^ ord(key)) for c in plaintext) 
+	return ''.join(chr(c ^ ord(k)) for c, k in zip(plaintext, itertools.cycle(key))) 
 
 # single byte xor cipher
 def find_single_byte_xor_of(cipherbyte):
@@ -84,7 +84,7 @@ def freq_profile(text):
 
 # higher score mean better closeness
 freq_str = "etaoinsrhdlucmfywgpbvkxqjz"
-freql = 13 
+freql = 26 
 
 def string_scoring(text1):
 	return difflib.SequenceMatcher(None, freq_profile(text1)[:freql], freq_str[:freql]).quick_ratio()

@@ -1,8 +1,50 @@
 #!/bin/python3
 import base64
 import binascii
-import string
-import bitstring
+
+# hex <-> bytes
+def hex2byte(h):
+	return bytes.fromhex(h)
+
+def byte2hex(b):
+	return binascii.b2a_hex(b).decode()
+
+# hex <-> string
+def hex2str(h, encoding='utf-8'):
+	return binascii.a2b_hex(h).decode(encoding=encoding)
+
+def str2hex(s):
+	return byte2hex(str2byte(s))
+
+# bytes <-> base64
+def byte2b64(b):
+	return base64.b64encode(b).decode()
+
+def b642byte(b):
+	return base64.b64decode(b)
+
+# hex <-> base64
+def hex2b64(h):
+	return byte2b64(hex2byte(h))
+
+def b642hex(b):
+	return byte2hex(b642byte(b))
+
+# string <-> byte
+def str2byte(s):
+	return bytes(s, encoding='utf-8')
+
+def byte2str(b):
+	return b.decode()
+
+# string <-> base64
+
+def str2b64(s):
+	return base64.b64encode(s)
+
+def b642str(b):
+	return base64.b64decode(b).decode()
+
 
 def asciiTobits(s): #
 	return bitstring.Bits(bytes=s)
@@ -28,20 +70,22 @@ def asciiToBase64(s):
 def base64ToAscii(s):
 	return binascii.a2b_base64(s)
 
-def xorHexStrings(h1, h2): #
+def xorHexStrings(h1, h2):
 	return asciiToHex(xorStrings(hexToAscii(h1), hexToAscii(h2)))
 
-def xorStrings(s1,s2): #
+def xorStrings(s1,s2):
 	result = ''
+	print (s1, s2)
 	for c1, c2 in zip(s1, s2):
 		result += chr(c1 ^ c2)
 	return bytes(result, 'utf-8')
 
 def testSingleXor(searchStr): #
 	char = string.ascii_letters + string.digits + ' '
-
+	#char = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'	
+	
 	# local dictionary file
-	filename = "/usr/share/dict/words"
+	filename = b"/usr/share/dict/words"
 
 	def wordProfiler(searchStr):
 		dictionary = open(filename).read()
@@ -58,10 +102,12 @@ def testSingleXor(searchStr): #
 	def findXor(searchStr):
 		cipher = hexToAscii(searchStr)
 		length = len(cipher)
-		maxSet = 0, 'a', ''
+		maxSet = 0, b'', b''
 
-		for key in char:
-			decipher = xorStrings(cipher, key*length)
+		for c in char:
+			print (c)
+			key = bytes(c * length, 'utf-8')
+			decipher = xorStrings(cipher, key)
 			score = charProfiler(decipher)
 			if maxSet[0] < score:
 				maxSet = score, key, decipher
@@ -71,6 +117,7 @@ def testSingleXor(searchStr): #
 	def charProfiler(searchStr):
 		score = 0
 		for c in searchStr:
+			match = chr(c)
 			if c in char:
 				score += 1
 		return float(score)/len(searchStr)
@@ -88,6 +135,23 @@ def repeatKeyXor(key, plaintext): #
 
 def hamming(b1, b2): #
 	return (b1 ^ b2).count(1)
+
+
+
+
+# https://bitbucket.org/pwnlandia/ctf-practice/
+def parsehex(s):
+    return bytes([int('0x'+s[n:n+2],16) for n in range(0,len(s),2)])
+
+def dumphex(b):
+    return "".join([hex(n)[2:].rjust(2,'0') for n in b])
+
+def parseb64(s):
+    return base64.b64decode(s)
+
+def dumpb64(b):
+    return base64.b64encode(b)
+
 
 
 '''

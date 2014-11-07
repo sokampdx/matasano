@@ -1,6 +1,11 @@
 #!/bin/python3
+#https://github.com/mmueller/cryptopals/
+
 import base64
 import binascii
+import itertools
+import struct
+
 
 # hex <-> bytes
 def hex2byte(h):
@@ -38,14 +43,25 @@ def byte2str(b):
 	return b.decode()
 
 # string <-> base64
-
 def str2b64(s):
 	return base64.b64encode(s)
 
 def b642str(b):
 	return base64.b64decode(b).decode()
 
+# byte xor function
+def xor_hex(plainhex, keyhex):
+	return xor_byte(hex2byte(plainhex), hex2byte(keyhex))
 
+def xor_byte(plainbyte, keybyte):
+	return bytes([b1 ^ b2 for b1, b2 in zip(plainbyte, itertools.cycle(keybyte))])	
+
+def xor_str(plaintext, key):
+	return xor_byte(str2byte(plaintext), str2byte(key))
+
+
+
+'''
 def asciiTobits(s): #
 	return bitstring.Bits(bytes=s)
 
@@ -136,22 +152,7 @@ def repeatKeyXor(key, plaintext): #
 def hamming(b1, b2): #
 	return (b1 ^ b2).count(1)
 
-
-
-
-# https://bitbucket.org/pwnlandia/ctf-practice/
-def parsehex(s):
-    return bytes([int('0x'+s[n:n+2],16) for n in range(0,len(s),2)])
-
-def dumphex(b):
-    return "".join([hex(n)[2:].rjust(2,'0') for n in b])
-
-def parseb64(s):
-    return base64.b64decode(s)
-
-def dumpb64(b):
-    return base64.b64encode(b)
-
+'''
 
 
 '''

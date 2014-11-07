@@ -1,26 +1,26 @@
-#!/bin/python
+#!/bin/python3
 import base64
 import binascii
 import string
 import bitstring
 
-def asciiTobits(s):
+def asciiTobits(s): #
 	return bitstring.Bits(bytes=s)
 
-def bitsToAscii(b):
+def bitsToAscii(b): #
 	return b.tobytes()
 
-def hexTobits(h):
+def hexTobits(h): #
 	return asciiTobits(hexToAscii(h))
 
-def bitsTohex(h):
+def bitsTohex(h): #
 	return b.hex
+ 
+def hexToAscii(h): 
+	return binascii.a2b_hex(h)
 
-def hexToAscii(h):
-	return binascii.unhexlify(h)
-
-def asciiToHex(s):
-	return binascii.hexlify(s)
+def asciiToHex(s): 
+	return binascii.b2a_hex(s)
 
 def asciiToBase64(s):
 	return binascii.b2a_base64(s)
@@ -28,16 +28,16 @@ def asciiToBase64(s):
 def base64ToAscii(s):
 	return binascii.a2b_base64(s)
 
-def xorHexStrings(h1, h2):
+def xorHexStrings(h1, h2): #
 	return asciiToHex(xorStrings(hexToAscii(h1), hexToAscii(h2)))
 
-def xorStrings(s1,s2):
+def xorStrings(s1,s2): #
 	result = ''
 	for c1, c2 in zip(s1, s2):
-		result += chr(ord(c1) ^ ord(c2))
-	return result
+		result += chr(c1 ^ c2)
+	return bytes(result, 'utf-8')
 
-def testSingleXor(searchStr):
+def testSingleXor(searchStr): #
 	char = string.ascii_letters + string.digits + ' '
 
 	# local dictionary file
@@ -79,14 +79,14 @@ def testSingleXor(searchStr):
 	# main
 	return findXor(searchStr)
 
-def repeatKeyXor(key, plaintext):
+def repeatKeyXor(key, plaintext): #
 	keyLen = len(key)
 	length = len(plaintext)
 	xorKey = key*(length//keyLen) + key[:(length % keyLen)]
 	
 	return xorStrings(plaintext, xorKey)
 
-def hamming(b1, b2):
+def hamming(b1, b2): #
 	return (b1 ^ b2).count(1)
 
 

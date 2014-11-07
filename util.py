@@ -4,15 +4,20 @@
 import base64
 import binascii
 import itertools
-import struct
-
+import difflib
+import collections
+import string
 
 # hex <-> bytes
 def hex2byte(h):
-	return bytes.fromhex(h)
+	return bytes([int('0x'+h[n:n+2],16) for n in range(0, len(h), 2)])
+	#return bytes.fromhex(h)
+	#return binascii.unhexlify(h)
 
 def byte2hex(b):
-	return binascii.b2a_hex(b).decode()
+	return ''.join([hex(n)[2:].rjust(2,'0') for n in b])
+	#return binascii.b2a_hex(b).decode()
+	#return binascii.hexlify(b).decode()
 
 # hex <-> string
 def hex2str(h, encoding='utf-8'):
@@ -54,11 +59,36 @@ def xor_hex(plainhex, keyhex):
 	return xor_byte(hex2byte(plainhex), hex2byte(keyhex))
 
 def xor_byte(plainbyte, keybyte):
-	return bytes([b1 ^ b2 for b1, b2 in zip(plainbyte, itertools.cycle(keybyte))])	
+	return bytes(map(lambda a, b: a^b, plainbyte, itertools.cycle(keybyte)))
+	#return bytes([b1 ^ b2 for b1, b2 in zip(plainbyte, itertools.cycle(keybyte))])	
+	#return ''.join(chr(ord(c1) ^ ord(c2)) for c1, c2 in zip(plainbyte, itertools.cycle(chr(keybyte))))
 
 def xor_str(plaintext, key):
-	return xor_byte(str2byte(plaintext), str2byte(key))
+	return ''.join(chr(c ^ ord(key)) for c in plaintext) 
 
+# single byte xor cipher
+freq_str = "etaoinsrhdlucmfywgpbvkxqjz"
+
+def find_single_byte_xor_of(ciphertext):
+	match = (0.0, None, None)
+	for key in range(256):
+		plaintext = xor_str(ciphertext, chr(key))
+		score = string_closeness(freq_profile(plaintext), freq_str)
+		if score > match[0]:
+			match = (score, chr(key), plaintext)
+	return match[1:]
+
+# return a string where the most freq alphabet listed first
+def freq_profile(text):	
+	freq = collections.Counter(text.lower())
+	return "".join(map(lambda x: x[0], freq.most_common()))
+
+# higher score mean better closeness
+def string_closeness(text1, text2):
+	return difflib.SequenceMatcher(None, text1, text2).quick_ratio()
+	#seq_matcher = difflib.SequenceMatcher(None, text1, text2)
+	#return seq_matcher.quick_ratio()
+	
 
 
 '''
@@ -98,7 +128,8 @@ def xorStrings(s1,s2):
 
 def testSingleXor(searchStr): #
 	char = string.ascii_letters + string.digits + ' '
-	#char = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'	
+	#char = b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
 	
 	# local dictionary file
 	filename = b"/usr/share/dict/words"
@@ -162,5 +193,5 @@ def hamming(b1, b2): #
 			    'k':0.8, 'l':4.0, 'm':2.4, 'n':6.7, 'o':7.5, 
 		    	'p':1.9, 'q':0.1, 'r':6.0, 's':6.3, 't':9.1,
 				'u':2.8, 'v':1.0, 'w':2.4, 'x':0.2, 'y':2.0, 'z':0.1}
-	freqSeq = "etaoinsrhdlucmfywgpbvkxqjz"
+	freqStr = "etaoinsrhdlucmfywgpbvkxqjz"
 '''

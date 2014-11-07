@@ -67,16 +67,15 @@ def xor_str(plaintext, key):
 	return ''.join(chr(c ^ ord(key)) for c in plaintext) 
 
 # single byte xor cipher
-freq_str = "etaoinsrhdlucmfywgpbvkxqjz"
-
-def find_single_byte_xor_of(ciphertext):
+def find_single_byte_xor_of(cipherbyte):
 	match = (0.0, None, None)
 	for key in range(256):
-		plaintext = xor_str(ciphertext, chr(key))
-		score = string_closeness(freq_profile(plaintext), freq_str)
-		if score > match[0]:
-			match = (score, chr(key), plaintext)
-	return match[1:]
+		plaintext = xor_str(cipherbyte, chr(key))
+		if all(c in string.printable for c in plaintext):
+			score = string_scoring(plaintext)
+			if score > match[0]:
+				match = (score, chr(key), plaintext)
+	return match
 
 # return a string where the most freq alphabet listed first
 def freq_profile(text):	
@@ -84,11 +83,55 @@ def freq_profile(text):
 	return "".join(map(lambda x: x[0], freq.most_common()))
 
 # higher score mean better closeness
-def string_closeness(text1, text2):
-	return difflib.SequenceMatcher(None, text1, text2).quick_ratio()
+freq_str = "etaoinsrhdlucmfywgpbvkxqjz"
+freql = 13 
+
+def string_scoring(text1):
+	return difflib.SequenceMatcher(None, freq_profile(text1)[:freql], freq_str[:freql]).quick_ratio()
 	#seq_matcher = difflib.SequenceMatcher(None, text1, text2)
 	#return seq_matcher.quick_ratio()
-	
+
+'''
+def string_scoring(text1):
+	return levenshtein(freq_profile(text1)[:freql], freq_str[:freql])	
+'''
+
+# levenshtein scoring between 2 text
+def levenshtein(s1, s2):
+	if len(s1) < len(s2):
+		return levenshtein(s2, s1)
+
+	if len(s2) == 0:
+		return len(s1)
+
+	previous = range(len(s2) + 1)
+	for i, c1 in enumerate(s1):
+		current = [i+1]
+		for j, c2 in enumerate(s2):
+			insert = previous[j+1] + 1
+			delete = current[j] + 1
+			substitute = previous[j] + (c1 != c2)
+			current.append(min(insert, delete, substitute))
+		previous = current
+	return previous[-1]
+
+
+'''	
+# looking at word in dictionary
+filename = b"/usr/share/dict/words"
+def string_scoring(searchStr):
+	dictionary = open(filename).read()
+	score = 0
+	wordList = searchStr.split()
+	dictList = dictionary.split()
+
+	for dictWord in dictList:
+		for word in wordList:
+			if word == dictWord:
+				score += 1
+	return score
+'''
+
 
 
 '''

@@ -5,16 +5,14 @@ import util
 filename = "s1c4.txt"
 
 cipherList = open(filename).read().split()
+maxSet = (0.0, None, None, None)
 
-for cipher in cipherList:
-	maxScore = 0.9
-	score, key, plaintext = util.testSingleXor(cipher)
-	wordlist = plaintext.split(' ')
-	if (plaintext != '') and (score > maxScore):
-		maxScore = score
-		maxSet = cipher, score, key, plaintext
+for cipherhex in cipherList:
+	score, key, plaintext = util.find_single_byte_xor_of(util.hex2byte(cipherhex))
+	if score > maxSet[0]:
+		print (score, key, plaintext)
+		maxSet = (score, key, plaintext, cipherhex)
 
-print (maxSet[0])
-print (maxSet[1:])
+print (maxSet)
 
 

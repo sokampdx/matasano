@@ -3,7 +3,6 @@
 import util
 import operator
 
-
 # input a cipher byte stringg
 def guessKeySize(b):
 	maxSize = 41 
@@ -51,21 +50,24 @@ def decryptXorBlock(cipher, size):
 
 	return key
 
-
-
+# cipher is in byte, return plaintext byte and key byte and keysize
+def breakRepeatKey(cipher):
+	resultList = guessKeySize(cipher)
+	result = findMinScore(resultList)
+	key = decryptXorBlock(cipher, result[0])
+	plaintext = util.xor_byte(cipher, util.str2byte(key)).decode()
+	return plaintext, key
 
 ######### tests ############
 
 def main():
 	filename = "s1c6.txt"
-	cipher = util.b642byte(open(filename).read().strip('\n'))
-	resultList = guessKeySize(cipher)
-	result = findMinScore(resultList)
-	key = decryptXorBlock(cipher, result[0])
-	plaintext = util.xor_byte(cipher, util.str2byte(key)).decode()
+	cipherbyte = util.b642byte(open(filename).read().strip('\n'))
+	plaintext, key = breakRepeatKey(cipherbyte)
+
 	print ("-------------------beg test3-------------")
 	#print (util.str2byte(cipher))
-	print ("min score \n", result)
+	print ("min score \n", findMinScore(guessKeySize(cipherbyte)))
 	#print ("cipher text \n", cipher)
 	print ("key \n", key)
 	print ("plaintext \n", plaintext)

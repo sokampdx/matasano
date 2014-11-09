@@ -90,28 +90,46 @@ freqDict = {'a':8.2, 'b':1.5, 'c':2.8, 'd':4.3, 'e':12.7,
 		    'k':0.8, 'l':4.0, 'm':2.4, 'n':6.7, 'o':7.5, 
 	    	'p':1.9, 'q':0.1, 'r':6.0, 's':6.3, 't':9.1,
 			'u':2.8, 'v':1.0, 'w':2.4, 'x':0.2, 'y':2.0, 'z':0.1}
-freql = 6
+
+freqDictSpace = {' ':18.29, 'e':10.27, 't':7.52, 'a':6.53,
+				 'o':6.16, 'n':5.71, 'i':5.67, 's':5.32,
+				 'r':4.99, 'h':4.98, 'l':3.32, 'd':3.28,
+				 'u':2.28, 'c':2.23, 'm':2.03, 'f':1.98,
+				 'w':1.70, 'g':1.62, 'p':1.50, 'y':1.43,
+				 'b':1.26, 'v':0.80, 'k':0.56, 'x':0.14,
+				 'j':0.10, 'q':0.08, 'z':0.05}
+
+freql = 10
+fst = 5
+snd = 10
 weight = 3
+
 '''
-# using sum of the frequency value to return a score
+# using variance of the different in frequency value to return a score
 def string_scoring(text1):
 	score = 0.0
-	for c in text1:
-		key = c.lower()
-		print (key)
+	freq = collections.Counter(text1.lower())
+	length = len(text1)	/ 100
+	for key in freq:
 		if key in freq_str:
-			score += freqDict[key]
-	return score
+			score += ((freq[key]/length) - freqDictSpace[key])**2
+	print (score, freq)
+	return (1/score)
 '''
 
+# string profile segment match against frequency 
+def string_match(text1, start, end):
+	return difflib.SequenceMatcher(None, (freq_profile(text1))[start:end], freq_str[start:end]).quick_ratio()
+	
 # using sequence matcher to return a score
 # fast with mix result
 def string_scoring(text1):
-	scoreHead = difflib.SequenceMatcher(None, (freq_profile(text1))[:freql], freq_str[:freql]).quick_ratio()
-	scoreTail = difflib.SequenceMatcher(None, (freq_profile(text1))[freql:], freq_str[freql:]).quick_ratio()
-	return scoreHead*weight + scoreTail
+	top = string_match(text1, 0, freql) * weight
+	bottom = string_match(text1, freql, 27)
+	return top + bottom
 	#seq_matcher = difflib.SequenceMatcher(None, text1, text2)
 	#return seq_matcher.quick_ratio()
+
 
 '''
 # using levenshtein to return a score

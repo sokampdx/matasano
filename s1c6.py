@@ -75,7 +75,7 @@ def main():
 
 def test2():
 	plaintext = b"I am trying to break this crypto pal challenge. Let see if I can finish the first set this week. I need to work on over the wire krypton wargame as well to be really good at this stuffs. This is a really hard problem that I need to be able to solve but I am not getting the right result at all. Why is it the lowerest hamming distance is not the correct keysize?"
-	testkey = b" %d3J#>"
+	testkey = b"if7(2 %d3J#>"
 	cipher = util.xor_byte(plaintext, testkey)
 
 	result = guessKeySize(cipher)
@@ -99,5 +99,5 @@ def test1():
 # main interface
 test1()
 test2()
-main()
+#main()
 

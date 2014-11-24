@@ -61,7 +61,7 @@ def breakRepeatKey(cipher):
 ######### tests ############
 
 def main():
-	filename = "s1c6.txt"
+	filename = "s1c06.txt"
 	cipherbyte = util.b642byte(open(filename).read().strip('\n'))
 	plaintext, key = breakRepeatKey(cipherbyte)
 

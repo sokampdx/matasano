@@ -13,7 +13,7 @@ def checkECBmode(cipherhexList):
 
 
 def main():
-	filename = "s1c8.txt"
+	filename = "s1c08.txt"
 	cipherhexList = open(filename).read().split('\n')
 	checkECBmode(cipherhexList)
 

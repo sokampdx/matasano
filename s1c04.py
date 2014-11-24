@@ -2,7 +2,7 @@
 
 import util
 
-filename = "s1c4.txt"
+filename = "s1c04.txt"
 
 cipherList = open(filename).read().split()
 maxSet = (0.0, None, None, None)

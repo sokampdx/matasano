@@ -9,12 +9,6 @@ import collections
 import string
 import bitstring
 
-# find string message (not byte) size
-def pkcs7pad(s, blocksize):
-	length = len(s)
-	padsize = blocksize - (length % blocksize)
-	padstr = s + (padsize * chr(padsize))
-	return padstr
 	
 # hex <-> bytes
 def hex2byte(h):

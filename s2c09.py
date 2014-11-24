@@ -1,8 +1,8 @@
-import util
+import crypto
 
 def main():
-	s = "YELLOW SUBMARINE"
+	s = b"YELLOW SUBMARINE"
 	size = 20
-	output=util.pkcs7pad(s, size)
+	output=crypto.pkcs7pad(s, size)
 	print(len(output),output)
 main()

@@ -6,21 +6,15 @@ import util
 def pkcs7pad(textbyte, blocksize):
 	length = len(textbyte)
 	padsize = blocksize - (length % blocksize)
+	if padsize == 0:
+		padsize = blocksize
 	padbyte = textbyte + (padsize * util.str2byte(chr(padsize)))
 	return padbyte
 
 def pkcs7unpad(padbyte):
-	result = padbyte
-	if ispkcs7(padbyte):
-		result = padbyte[:-padbyte[-1]]
-	return result
+	padsize = padbyte[-1]
+	return padbyte[:-padsize]
 		
-
-def ispkcs7(padbyte):
-	pad = padbyte[(-padbyte[-1:]):]
-	return (len(pad) == ord(pad[0])) and (pad == len(pad) * s[0])	 
-
-
 def decryptAESECB(cipherbyte, keybyte):
 	aesObj = AES.new(keybyte)
 	return aesObj.decrypt(cipherbyte)
@@ -30,10 +24,10 @@ def encryptAESECB(plainbyte, keybyte):
 	return aesObj.encrypt(plainbyte)
 
 def decryptAESCBC(cipherbyte, keybyte, ivbyte):
-	sz = AES.block_size
-	cipherblock = [cipherbyte[i:(i+sz)] for i in range (0, len(cipherbyte), sz)]
-	plainbyte = ivbyte[:]
-	previousblock = ivbyte[:]
+	size = AES.block_size
+	cipherblock = [cipherbyte[i:(i+size)] for i in range (0, len(cipherbyte), size)]
+	plainbyte = ivbyte
+	previousblock = ivbyte
 	
 	for currentblock in cipherblock:
 		plainbyte += util.xor_byte(decryptAESECB(currentblock, keybyte), previousblock)
